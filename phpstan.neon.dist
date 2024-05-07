@@ -1,0 +1,9 @@
+parameters:
+    paths:
+        - src
+        - tests
+
+    level: max
+
+    checkMissingIterableValueType: true
+    reportMaybesInPropertyPhpDocTypes: false
