@@ -1,4 +1,4 @@
-# php-enhanced-enums
+# PHP Enhanced Enums
 Enhanced Enum methods for PHP Enums
 
 In this package, we have 4 traits: `EnhancedEnum`, `HasDescription`, `HasLabel` and `IsSelectArray`. Here are all the methods that each trait provides:
@@ -22,17 +22,20 @@ In this package, we have 4 traits: `EnhancedEnum`, `HasDescription`, `HasLabel` 
     - [`tryGetCaseByPosition()`](#trygetcasebyposition)
     - [`first()`](#first)
     - [`last()`](#last)
+
 - [HasDescription](#hasdescription)
     - [`getDescription()`](#getdescription)
     - [`getDescriptions()`](#getdescriptions)
     - [`tryFromDescription()`](#tryfromdescription)
     - [`tryFromDescriptionIgnoringCase()`](#tryfromdescriptionignoringcase)
+
 - [HasLabel](#haslabel)
     - [`getLabel()`](#getlabel)
     - [`getLabels()`](#getlabels)
     - [`tryFromLabel()`](#tryfromlabel)
     - [`tryFromLabelIgnoringCase()`](#tryfromlabelignoringcase)
     - [`shouldAutoGenerateLabelFromValue()`](#shouldautogeneratelabelfromvalue)
+
 - [IsSelectArray](#isselectarray)
     - [`asSelectArray()`](#asselectarray)
 
