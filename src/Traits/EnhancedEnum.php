@@ -4,16 +4,30 @@ declare(strict_types=1);
 
 namespace ErikAraujo\PhpEnhancedEnums\Traits;
 
-use ErikAraujo\PhpEnhancedEnums\Attributes\Label;
+use OutOfRangeException;
 use ReflectionEnum;
-use ReflectionClassConstant;
+use ReflectionNamedType;
 
 trait EnhancedEnum
 {
+    public static function parse(int|string $value): static
+    {
+        return static::from($value);
+    }
+
+    public static function tryParse(int|string $value, bool $ignoreCase = false): ?static
+    {
+        if ($ignoreCase) {
+            return static::tryFromIgnoringCase($value);
+        }
+
+        return static::tryParse($value);
+    }
+
     /**
      * @return array<int,string>
      */
-    public static function names(): array
+    public static function getNames(): array
     {
         return array_column(static::cases(), 'name');
     }
@@ -21,58 +35,47 @@ trait EnhancedEnum
     /**
      * @return array<int,string|int>
      */
-    public static function values(): array
+    public static function getValues(): array
     {
         return array_column(static::cases(), 'value');
     }
 
-    /**
-     * @return array<int,string>
-     */
-    public static function labels(): array
+    public static function isDefined(int|string $value, bool $ignoreCase = false): bool
     {
-        return array_column(static::asSelectArray(), 'name');
-    }
-
-    /**
-     * @return array<int,array{name:string,value:string|int}>
-     */
-    public static function asSelectArray(): array
-    {
-        $values = array_map(function (self $enum) {
-            return [
-                'name' => $enum->getLabel(),
-                'value' => $enum->value,
-            ];
-        }, self::cases());
-
-        return $values;
-    }
-
-    public function getLabel(): string
-    {
-        $ref = new ReflectionClassConstant(self::class, $this->name);
-        $classAttributes = $ref->getAttributes(Label::class);
-
-        if (count($classAttributes) === 0) {
-            $parts = explode(' ', (string) $this->value);
-
-            $parts = count($parts) > 1
-                ? array_map(fn (string $value) => mb_convert_case($value, MB_CASE_TITLE, 'UTF-8'), $parts)
-                : array_map(
-                    fn (string $value) => mb_convert_case($value, MB_CASE_TITLE, 'UTF-8'),
-                    preg_split('/(?=\p{Lu})/u', implode('_', $parts), -1, PREG_SPLIT_NO_EMPTY) ?: [],
-                );
-
-            $collapsed = str_replace(['-', '_', ' '], '_', implode('_', $parts));
-
-            return implode(' ', array_filter(explode('_', $collapsed)));
+        if ($ignoreCase) {
+            return static::tryFromIgnoringCase($value) !== null;
         }
 
-        return $classAttributes[0]->newInstance()->label;
+        if (self::tryFrom($value)) {
+            return true;
+        }
+
+        return false;
     }
 
-    public static function tryFromCanonicalizing(string|int $value): ?static
+    public function toString(): string
+    {
+        return (string) $this->value;
+    }
+
+    public function is(self|int|string $value, bool $ignoreCase = false): bool
+    {
+        if ($value instanceof self) {
+            return $this->value === $value->value;
+        }
+
+        if (is_int($value)) {
+            return $this->value === self::tryFrom($value);
+        }
+
+        if ($ignoreCase) {
+            return $this->value === self::tryFromIgnoringCase($value);
+        }
+
+        return $this->value === self::tryFrom($value);
+    }
+
+    public static function tryFromIgnoringCase(string|int $value): ?static
     {
         $isIntEnum = self::isIntEnum();
 
@@ -98,8 +101,59 @@ trait EnhancedEnum
         return null;
     }
 
+    public static function tryParseIgnoringCase(string|int $value): ?static
+    {
+        return self::tryFromIgnoringCase($value);
+    }
+
+    public static function getBackingType(): ?ReflectionNamedType
+    {
+        return (new ReflectionEnum(self::class))->getBackingType();
+    }
+
+    public static function getUnderlyingType(): ?ReflectionNamedType
+    {
+        return static::getBackingType();
+    }
+
     public static function isIntEnum(): bool
     {
-        return (new ReflectionEnum(self::class))->getBackingType()?->getName() === 'int';
+        return static::getBackingType()?->getName() === 'int';
+    }
+
+    public static function isStringEnum(): bool
+    {
+        return static::getBackingType()?->getName() === 'string';
+    }
+
+    public static function getRandom(): self
+    {
+        $cases = static::cases();
+        return $cases[array_rand($cases)];
+    }
+
+    public static function getCaseByPosition(int $position): self
+    {
+        if ($case = self::tryGetCaseByPosition($position)) {
+            return $case;
+        }
+
+        throw new OutOfRangeException("No enum case found at position {$position}");
+    }
+
+    public static function tryGetCaseByPosition(int $position): ?self
+    {
+        return self::cases()[$position] ?? null;
+    }
+
+    public static function first(): self
+    {
+        return self::cases()[0];
+    }
+
+    public static function last(): self
+    {
+        $cases = self::cases();
+        return end($cases);
     }
 }

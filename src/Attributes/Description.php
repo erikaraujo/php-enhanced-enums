@@ -7,10 +7,10 @@ namespace ErikAraujo\PhpEnhancedEnums\Attributes;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_CLASS_CONSTANT | Attribute::TARGET_CLASS)]
-class Label
+class Description
 {
     public function __construct(
-        public ?string $label,
+        public ?string $description,
     ) {
     }
 }

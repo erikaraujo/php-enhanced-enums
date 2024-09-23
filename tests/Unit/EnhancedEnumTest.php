@@ -20,7 +20,7 @@ class EnhancedEnumTest extends TestCase
             'Diamonds',
             'Clubs',
             'Spades',
-        ], Suit::names());
+        ], Suit::getNames());
     }
 
     public function test_enum_returns_an_array_of_its_values(): void
@@ -30,7 +30,7 @@ class EnhancedEnumTest extends TestCase
             'diamonds',
             'clubs',
             'spades',
-        ], Suit::values());
+        ], Suit::getValues());
     }
 
     public function test_enum_returns_an_array_of_its_labels(): void
@@ -40,7 +40,7 @@ class EnhancedEnumTest extends TestCase
             'Diamonds Suit',
             'Clubs Suit',
             'Spades',
-        ], Suit::labels());
+        ], Suit::getLabels());
     }
 
     public function test_enum_returns_itself_as_select_array(): void
