@@ -34,6 +34,10 @@
     "scripts": {
         "format": "./vendor/bin/pint",
         "test": "./vendor/bin/phpunit",
+        "test:coverage:html": [
+            "@test --coverage-html reports/test-coverage --coverage-text",
+            "open reports/test-coverage/index.html"
+        ],
         "analyse": "./vendor/bin/phpstan analyse"
     }
 }
