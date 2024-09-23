@@ -60,19 +60,19 @@ trait EnhancedEnum
 
     public function is(self|int|string $value, bool $ignoreCase = false): bool
     {
-        if ($value instanceof self) {
-            return $this->value === $value->value;
-        }
-
         if (is_int($value)) {
-            return $this->value === self::tryFrom($value);
+            return (int) $this->value === $value;
         }
 
-        if ($ignoreCase) {
-            return $this->value === self::tryFromIgnoringCase($value);
+        if (is_string($value)) {
+            if ($ignoreCase) {
+                return strcasecmp((string) $this->value, $value) === 0;
+            }
+
+            return (string) $this->value === $value;
         }
 
-        return $this->value === self::tryFrom($value);
+        return $this === $value;
     }
 
     public static function tryFromIgnoringCase(string|int $value): ?static

@@ -6,6 +6,7 @@ namespace ErikAraujo\PhpEnhancedEnums\Traits;
 
 use ErikAraujo\PhpEnhancedEnums\Attributes\Label;
 use ReflectionClassConstant;
+use ReflectionEnum;
 
 trait HasLabel
 {
@@ -68,11 +69,7 @@ trait HasLabel
 
     private function generateLabelFromValue(): string
     {
-        $valueToBeUsedForLabel = is_int($this->value)
-            ? $this->name
-            : $this->value;
-
-        $parts = explode(' ', $valueToBeUsedForLabel);
+        $parts = explode(' ', $this->getValueToBeUsedForLabelAutomaticGeneration());
 
         $parts = count($parts) > 1
             ? array_map(
@@ -87,5 +84,12 @@ trait HasLabel
         $collapsed = str_replace(['-', '_', ' '], '_', implode('_', $parts));
 
         return implode(' ', array_filter(explode('_', $collapsed)));
+    }
+
+    private function getValueToBeUsedForLabelAutomaticGeneration(): string
+    {
+        return ((new ReflectionEnum(self::class))->getBackingType()?->getName() === 'int')
+            ? $this->name
+            : $this->value;
     }
 }

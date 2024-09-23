@@ -67,17 +67,17 @@ class EnhancedEnumTest extends TestCase
 
     public function test_enhanced_enum_returns_itself_canonicalizing_string(): void
     {
-        $this->assertEquals(Suit::Spades, Suit::tryFromCanonicalizing('spades'));
-        $this->assertEquals(Suit::Spades, Suit::tryFromCanonicalizing('sPaDeS'));
-        $this->assertNull(Suit::tryFromCanonicalizing('non_existing_suit'));
+        $this->assertEquals(Suit::Spades, Suit::tryFromIgnoringCase('spades'));
+        $this->assertEquals(Suit::Spades, Suit::tryFromIgnoringCase('sPaDeS'));
+        $this->assertNull(Suit::tryFromIgnoringCase('non_existing_suit'));
     }
 
     public function test_enhanced_enum_returns_itself_canonicalizing_int(): void
     {
-        $this->assertEquals(Number::One, Number::tryFromCanonicalizing(1));
-        $this->assertEquals(Number::Two, Number::tryFromCanonicalizing('2'));
+        $this->assertEquals(Number::One, Number::tryFromIgnoringCase(1));
+        $this->assertEquals(Number::Two, Number::tryFromIgnoringCase('2'));
 
-        $this->assertNull(Number::tryFromCanonicalizing('three'));
+        $this->assertNull(Number::tryFromIgnoringCase('three'));
     }
 
     public function test_enhanced_enum_instance_returns_its_label(): void
