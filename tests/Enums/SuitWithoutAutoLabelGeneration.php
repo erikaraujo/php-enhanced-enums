@@ -4,29 +4,28 @@ declare(strict_types=1);
 
 namespace ErikAraujo\PhpEnhancedEnums\Tests\Enums;
 
-use ErikAraujo\PhpEnhancedEnums\Attributes\Description;
 use ErikAraujo\PhpEnhancedEnums\Attributes\Label;
-use ErikAraujo\PhpEnhancedEnums\Traits\EnhancedEnum;
-use ErikAraujo\PhpEnhancedEnums\Traits\HasDescription;
 use ErikAraujo\PhpEnhancedEnums\Traits\HasLabel;
 use ErikAraujo\PhpEnhancedEnums\Traits\IsSelectArray;
 
-enum Suit: string
+enum SuitWithoutAutoLabelGeneration: string
 {
-    use EnhancedEnum;
     use HasLabel;
-    use HasDescription;
     use IsSelectArray;
 
-    case Hearts = 'Hearts Suit';
+    #[Label('Hearts Suit')]
+    case Hearts = 'hearts';
 
     #[Label('Diamonds Suit')]
-    #[Description('The diamonds suit')]
     case Diamonds = 'diamonds';
 
     #[Label('Clubs Suit')]
     case Clubs = 'clubs';
 
-    #[Description('The spades suit')]
     case Spades = 'spades';
+
+    protected function shouldAutoGenerateLabelFromValue(): bool
+    {
+        return false;
+    }
 }

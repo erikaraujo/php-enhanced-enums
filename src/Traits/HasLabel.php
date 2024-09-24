@@ -32,7 +32,7 @@ trait HasLabel
     public static function getLabels(): array
     {
         return array_map(
-            fn (self $enum): string => $enum->getLabel() ?? $enum->value,
+            fn (self $enum): ?string => $enum->getLabel(),
             self::cases()
         );
     }
@@ -88,7 +88,9 @@ trait HasLabel
 
     private function getValueToBeUsedForLabelAutomaticGeneration(): string
     {
-        return ((new ReflectionEnum(self::class))->getBackingType()?->getName() === 'int')
+        $backingType = (new ReflectionEnum(self::class))->getBackingType();
+
+        return (is_null($backingType) || $backingType->getName() === 'int')
             ? $this->name
             : $this->value;
     }

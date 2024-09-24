@@ -4,24 +4,43 @@ declare(strict_types=1);
 
 namespace ErikAraujo\PhpEnhancedEnums\Traits;
 
+use BackedEnum;
+use ErikAraujo\PhpEnhancedEnums\Exceptions\CannotParseNonBackedEnumsException;
+use ErikAraujo\PhpEnhancedEnums\Exceptions\NonBackedEnumsHaveNoValuesException;
 use OutOfRangeException;
 use ReflectionEnum;
 use ReflectionNamedType;
 
 trait EnhancedEnum
 {
+    public static function isBackedEnum(): bool
+    {
+        return in_array(
+            BackedEnum::class,
+            (new ReflectionEnum(static::class))->getInterfaceNames(),
+        );
+    }
+
     public static function parse(int|string $value): static
     {
+        if (! self::isBackedEnum()) {
+            throw new CannotParseNonBackedEnumsException();
+        }
+
         return static::from($value);
     }
 
     public static function tryParse(int|string $value, bool $ignoreCase = false): ?static
     {
+        if (! self::isBackedEnum()) {
+            throw new CannotParseNonBackedEnumsException();
+        }
+
         if ($ignoreCase) {
             return static::tryFromIgnoringCase($value);
         }
 
-        return static::tryParse($value);
+        return static::tryFrom($value);
     }
 
     /**
@@ -37,11 +56,18 @@ trait EnhancedEnum
      */
     public static function getValues(): array
     {
+        if (! self::isBackedEnum()) {
+            throw new NonBackedEnumsHaveNoValuesException();
+        }
         return array_column(static::cases(), 'value');
     }
 
     public static function isDefined(int|string $value, bool $ignoreCase = false): bool
     {
+        if (! self::isBackedEnum()) {
+            throw new NonBackedEnumsHaveNoValuesException();
+        }
+
         if ($ignoreCase) {
             return static::tryFromIgnoringCase($value) !== null;
         }
@@ -55,16 +81,28 @@ trait EnhancedEnum
 
     public function toString(): string
     {
+        if (! self::isBackedEnum()) {
+            throw new NonBackedEnumsHaveNoValuesException();
+        }
+
         return (string) $this->value;
     }
 
     public function is(self|int|string $value, bool $ignoreCase = false): bool
     {
         if (is_int($value)) {
+            if (! self::isBackedEnum()) {
+                throw new NonBackedEnumsHaveNoValuesException();
+            }
+
             return (int) $this->value === $value;
         }
 
         if (is_string($value)) {
+            if (! self::isBackedEnum()) {
+                throw new NonBackedEnumsHaveNoValuesException();
+            }
+
             if ($ignoreCase) {
                 return strcasecmp((string) $this->value, $value) === 0;
             }
@@ -77,6 +115,10 @@ trait EnhancedEnum
 
     public static function tryFromIgnoringCase(string|int $value): ?static
     {
+        if (! self::isBackedEnum()) {
+            throw new CannotParseNonBackedEnumsException();
+        }
+
         $isIntEnum = self::isIntEnum();
 
         /**

@@ -6,27 +6,23 @@ namespace ErikAraujo\PhpEnhancedEnums\Tests\Enums;
 
 use ErikAraujo\PhpEnhancedEnums\Attributes\Description;
 use ErikAraujo\PhpEnhancedEnums\Attributes\Label;
-use ErikAraujo\PhpEnhancedEnums\Traits\EnhancedEnum;
-use ErikAraujo\PhpEnhancedEnums\Traits\HasDescription;
 use ErikAraujo\PhpEnhancedEnums\Traits\HasLabel;
+use ErikAraujo\PhpEnhancedEnums\Traits\EnhancedEnum;
 use ErikAraujo\PhpEnhancedEnums\Traits\IsSelectArray;
+use ErikAraujo\PhpEnhancedEnums\Traits\HasDescription;
 
-enum Suit: string
+enum NonBackedNumber
 {
     use EnhancedEnum;
     use HasLabel;
     use HasDescription;
     use IsSelectArray;
 
-    case Hearts = 'Hearts Suit';
+    case Zero;
 
-    #[Label('Diamonds Suit')]
-    #[Description('The diamonds suit')]
-    case Diamonds = 'diamonds';
+    #[Description('This is the number one')]
+    case One;
 
-    #[Label('Clubs Suit')]
-    case Clubs = 'clubs';
-
-    #[Description('The spades suit')]
-    case Spades = 'spades';
+    #[Label('Number two')]
+    case Two;
 }
