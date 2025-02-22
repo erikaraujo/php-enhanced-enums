@@ -32,12 +32,27 @@ trait IsSelectArray
 
         return array_map(function (self $enum) use ($includeDescription) {
             return [
-                'name' => $enum->getLabel() ?? (string) $enum->value,
-                'value' => $enum->value,
+                static::getSelectArrayNameKey() => $enum->getLabel() ?? (string) $enum->value,
+                static::getSelectArrayValueKey() => $enum->value,
                 ...$includeDescription
-                    ? ['description' => $enum->getDescription()]
+                    ? [static::getSelectArrayDescriptionKey() => $enum->getDescription()]
                     : [],
             ];
-        }, self::cases());
+        }, static::cases());
+    }
+
+    protected static function getSelectArrayNameKey(): string
+    {
+        return 'name';
+    }
+
+    protected static function getSelectArrayValueKey(): string
+    {
+        return 'value';
+    }
+
+    protected static function getSelectArrayDescriptionKey(): string
+    {
+        return 'description';
     }
 }

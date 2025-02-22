@@ -11,7 +11,7 @@ trait HasDescription
 {
     public function getDescription(): ?string
     {
-        $ref = new ReflectionClassConstant(self::class, $this->name);
+        $ref = new ReflectionClassConstant(static::class, $this->name);
 
         $descriptionClassAttributes = $ref->getAttributes(Description::class);
         if (count($descriptionClassAttributes) > 0) {
@@ -28,17 +28,17 @@ trait HasDescription
     {
         return array_map(
             fn (self $enum): ?string => $enum->getDescription(),
-            self::cases()
+            static::cases()
         );
     }
 
-    public static function tryFromDescription(string $description, bool $ignoreCase = false): ?self
+    public static function tryFromDescription(string $description, bool $ignoreCase = false): ?static
     {
         if ($ignoreCase) {
             return static::tryFromDescriptionIgnoringCase($description);
         }
 
-        foreach (self::cases() as $case) {
+        foreach (static::cases() as $case) {
             if ($case->getDescription() === $description) {
                 return $case;
             }
@@ -46,7 +46,7 @@ trait HasDescription
         return null;
     }
 
-    public static function tryFromDescriptionIgnoringCase(string $description): ?self
+    public static function tryFromDescriptionIgnoringCase(string $description): ?static
     {
         foreach (static::cases() as $case) {
             if (strcasecmp((string) $case->getDescription(), $description) === 0) {

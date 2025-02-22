@@ -12,7 +12,7 @@ trait HasLabel
 {
     public function getLabel(): ?string
     {
-        $ref = new ReflectionClassConstant(self::class, $this->name);
+        $ref = new ReflectionClassConstant(static::class, $this->name);
         $labelClassAttributes = $ref->getAttributes(Label::class);
 
         if (count($labelClassAttributes) > 0) {
@@ -33,17 +33,17 @@ trait HasLabel
     {
         return array_map(
             fn (self $enum): ?string => $enum->getLabel(),
-            self::cases()
+            static::cases()
         );
     }
 
-    public static function tryFromLabel(string $label, bool $ignoreCase = false): ?self
+    public static function tryFromLabel(string $label, bool $ignoreCase = false): ?static
     {
         if ($ignoreCase) {
             return static::tryFromLabelIgnoringCase($label);
         }
 
-        foreach (self::cases() as $case) {
+        foreach (static::cases() as $case) {
             if ($case->getLabel() === $label) {
                 return $case;
             }
@@ -51,7 +51,7 @@ trait HasLabel
         return null;
     }
 
-    public static function tryFromLabelIgnoringCase(string $label): ?self
+    public static function tryFromLabelIgnoringCase(string $label): ?static
     {
         foreach (static::cases() as $case) {
             if (strcasecmp((string) $case->getLabel(), $label) === 0) {
@@ -88,7 +88,7 @@ trait HasLabel
 
     private function getValueToBeUsedForLabelAutomaticGeneration(): string
     {
-        $backingType = (new ReflectionEnum(self::class))->getBackingType();
+        $backingType = (new ReflectionEnum(static::class))->getBackingType();
 
         return (is_null($backingType) || $backingType->getName() === 'int')
             ? $this->name
