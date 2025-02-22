@@ -16,8 +16,8 @@ trait IsSelectArray
     /**
      * @return (
      *      $includeDescription is true
-     *          ? array<int,array{name:string,value:string|int,description:?string}>
-     *          : array<int,array{name:string,value:string|int}>
+     *          ? array<int,array<string,string|int|null>>
+     *          : array<int,array<string,string|int>>
      * )
      */
     public static function asSelectArray(bool $includeDescription = false): array
